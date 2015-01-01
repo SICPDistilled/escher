@@ -92,9 +92,6 @@
   ; COMPLETE
   )
 
-(def george
-  ; COMPLETE
-  )
 
 (defn quartet [p1 p2 p3 p4]
   (below (beside p1 p2)
@@ -146,10 +143,11 @@
 (defn square-limit [p n]
   (combine-four (corner-split p n)))
 
-; Ex2.49, Make these shapes with segment-painter
+; Ex2.49, Make these shapes with segment-painter/path
 (def box )
 (def x)
 (def diamond)
+(def george)
 
 (defn draw [picture]
   (picture whole-window))
