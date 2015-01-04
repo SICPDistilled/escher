@@ -160,7 +160,7 @@
     (let [width (.width img)
           height (.height img)]
       ; COMPLETE
-      ))))
+      )))
 
 (def diag (segment-painter [[[0 0] [1 1]]]))
 
