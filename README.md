@@ -2,6 +2,8 @@
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SICPDistilled/escher?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+<img src="http://uploads2.wikiart.org/images/m-c-escher/square-limit.jpg" width="450">
+
 ## Getting started
 Look over the [slides](http://www.sicpdistilled.com/slides/2.2.4/#1) (Video and ASCIIcast soon!)
 
