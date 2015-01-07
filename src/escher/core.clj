@@ -169,39 +169,31 @@
         bruce (image-painter (q/load-image "data/bruce.jpg"))
         angels (image-painter (q/load-image "data/angels.jpg"))]
     (q/background 255)
+    ;; (frame-painter frame1)
+    ;; (draw x)
+    ;; (draw box)
     ;; (george frame2)
-    ;; (bruce frame1)
-    ;; (bruce frame2)
-    ;; (draw (beside george bruce))
+    ;; (draw (rotate george))
     ;; (draw (flip-horiz george))
     ;; (draw (beside box box))
-    ;; (draw  (combine-four george))
-    ;; (draw (corner-split bruce 4))
-    ;; (draw (square-limit bruce 3))
-    ;; (draw (beside  bruce (below  bruce
-    ;;                              george)))
+    ;; (draw (combine-four george))
     ;; (draw (beside (below george george)
     ;;               (flip-horiz (below george george))))
     ;; (draw (below (beside george (flip-horiz george))
     ;;              (beside george (flip-horiz george))))
-    ;; (draw (rotate george))
-    ;; (frame-painter frame1)
-    ;; (frame-painter frame2)
-    ;; (diag frame1)
-    ;; (diag frame2)
-    ;; (draw (up-split bruce 4))
-    ;; (draw (corner-split bruce 1))
-    ;; (draw (square-limit bruce 4))
-    ;; (draw (square-limit angels 4))
-    ;; (draw bruce)
-    ;; (draw (corner-split george 4))
-    ;; (draw (quartet george box man bruce))
+
     ;; (draw ((square-of-four identity flip-vert
     ;;                        flip-horiz rotate)
     ;;        george))
-    ;; (draw (below bruce
-    ;;              man))
-    ;; (q/save "square-of-four.png")
+
+    ; Needs image-painter
+    ;; (bruce frame1)
+    ;; (bruce frame2)
+    ;; (draw (beside george bruce))
+    ;; (draw (corner-split bruce 4))
+    ;; (draw (square-limit bruce 3))
+    ;; (draw (beside  bruce (below  bruce
+    ;;                              george)))
     ))
 
 (q/defsketch escher
