@@ -42,6 +42,6 @@ You should check out the docs for [Quil transform](http://quil.info/api/transfor
 ## Advanced, by which I mean I have not done it myself :-)
 * Can you do Circle Limit?
 
-![alt tag](https://raw.github.com/SICPDistilled/escher/master/doc/CircleLimit4.jpg)
+<img src="http://uploads5.wikiart.org/images/m-c-escher/circle-limit-iv.jpg" width="450">
 
 (Might want to search for 'escher hyperbolic')
