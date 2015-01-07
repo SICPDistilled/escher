@@ -68,7 +68,7 @@
 
 (defn rotate [p]
   ;; COMPLETE
-  (transform-picture p [1 0] [1 1] [0 0]))
+  )
 
 (defn rotate180 [p]
   (rotate (rotate p)))
