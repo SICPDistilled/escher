@@ -2,12 +2,17 @@
   (require [quil.core :as q])
   (:gen-class))
 
+;; In Quil, [0 0] is upper left corner of window.
+;; Increasing x values move a point to the right.
+;; Increasing y values move a point downward.
+
 (def width 600)
 (def height 600)
 
 (def draw-line q/line)
 
-;; origin, e1, and e2 (all 2-D vectors) define a frame
+;; origin, e1, and e2 (all 2-D vectors) define a frame.
+;; Think of e1 as the x-axis, e2 as the y-axis.
 
 (def whole-window {:origin [0 0]
                    :e1 [width 0]
@@ -46,7 +51,8 @@
 
 (defn frame-coord-map
   "Returns function that maps [x y] relative to the frame
-  defined by origin (a point) and vectors e1, e2."
+  defined by origin (a vector to be interpreted as the point
+  describing the origin) and vectors e1 (x-axis), e2 (y-axis)."
   [{:keys [origin e1 e2]}]
   (fn [[x y]]
     (add-vec origin
@@ -80,12 +86,10 @@
   (transform-picture p [0 1] [1 1] [0 0]))
 
 (defn flip-horiz [p]
-  ;; COMPLETE (Ex 2.50)
-  )
+  (transform-picture p [1 0] [0 0] [1 1]))
 
 (defn rotate [p]
-  ;; COMPLETE
-  )
+  (transform-picture p [1 0] [1 1] [0 0]))
 
 (defn rotate180 [p]
   (rotate (rotate p)))
@@ -191,6 +195,10 @@
 (def p21 (make-vect 0.15 0.4))
 (def p22 (make-vect 0.0 0.15))
 
+;; Example usage of path:
+;; (path p1 p2 p3) -->
+;;    (([0 0.35] [0.15 0.6]) ([0.15 0.6] [0.3 0.4]))
+
 ; Ex2.49, Make these shapes with segment-painter/path
 (def box )
 (def x)
@@ -227,10 +235,10 @@
     ;; (frame-painter frame1)
     ;; (draw x)
     ;; (draw box)
-    ;; (george whole-window)
-    (draw george)
+    ;; (draw george)
     ;; (draw (rotate george))
-    ;; (draw (flip-horiz george))
+    (draw (beside george (rotate180 george)))
+    ;; (draw (flip-vert george))
     ;; (draw (beside box box))
     ;; (draw (combine-four george))
     ;; (draw (beside (below george george)
