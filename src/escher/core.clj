@@ -7,6 +7,8 @@
 
 (def draw-line q/line)
 
+;; origin, e1, and e2 (all 2-D vectors) define a frame
+
 (def whole-window {:origin [0 0]
                    :e1 [width 0]
                    :e2 [0 height]})
@@ -19,19 +21,32 @@
              :e1 [100 0]
              :e2 [0 200]})
 
+; gw
+(defn make-vect [x y]
+  [x y])
+
+
+; gw
+(defn make-segment [p1 p2]
+  [p1 p2])
+
+; gw
 (defn add-vec [[x1 y1] [x2 y2]]
-  ;; COMPLETE (Ex 2.46)
+  [(+ x1 x2) (+ y1 y2)]
  )
 
+; gw
 (defn sub-vec [[x1 y1] [x2 y2]]
-  ;; COMPLETE
+  [(- x1 x2) (- y1 y2)]
   )
 
 (defn scale-vec [[x y] s]
-  ;; COMPLETE
+  [(* x s) (* y s)]
   )
 
 (defn frame-coord-map
+  "Returns function that maps [x y] relative to the frame
+  defined by origin (a point) and vectors e1, e2."
   [{:keys [origin e1 e2]}]
   (fn [[x y]]
     (add-vec origin
@@ -39,6 +54,8 @@
                       (scale-vec e2 y)))))
 
 (defn frame-painter [{:keys [origin e1 e2]}]
+  "Draws parallelogram 'frame' based on origin and vectors e1 and e2.
+  Must execute within a sketch."
   (let [corner (add-vec origin (add-vec e1 e2))]
     (draw-line origin (add-vec origin e1))
     (draw-line origin (add-vec origin e2))
@@ -84,12 +101,18 @@
       (left frame)
       (right frame))))
 
+; gw
 (defn below [p1 p2]
-  ; COMPLETE (Ex 2.51)
+  (rotate (beside (rotate270 p1)
+                  (rotate270 p2)))
   )
 
-(defn path [& veclist]
-  ; COMPLETE
+; gw
+(defn path
+  "Creates a seq of pairs-of-points from a 'bare' list of points. Use to
+  draw a continuous line through the list of points."
+  [& veclist]
+  (partition 2 1 veclist)
   )
 
 
@@ -143,11 +166,43 @@
 (defn square-limit [p n]
   (combine-four (corner-split p n)))
 
+;; George data
+
+(def p1 (make-vect 0 0.35))
+(def p2 (make-vect 0.15 0.6))
+(def p3 (make-vect 0.3 0.4))
+(def p4 (make-vect 0.35 0.5))
+(def p5 (make-vect 0.25 1.0))
+(def p6 (make-vect 0.4 1.0))
+(def p7 (make-vect 0.5 0.7))
+(def p8 (make-vect 0.6 1.0))
+(def p9 (make-vect 0.75 1.0))
+(def p10 (make-vect 0.6 0.55))
+(def p11 (make-vect 1 0.85))
+(def p12 (make-vect 1 0.65))
+(def p13 (make-vect 0.75 0.35))
+(def p14 (make-vect 0.6 0.35))
+(def p15 (make-vect 0.65 0.15))
+(def p16 (make-vect 0.6 0))
+(def p17 (make-vect 0.4 0))
+(def p18 (make-vect 0.35 0.15))
+(def p19 (make-vect 0.4 0.35))
+(def p20 (make-vect 0.3 0.35))
+(def p21 (make-vect 0.15 0.4))
+(def p22 (make-vect 0.0 0.15))
+
 ; Ex2.49, Make these shapes with segment-painter/path
 (def box )
 (def x)
 (def diamond)
-(def george)
+; gw
+(def george-data
+  (path  p1  p2  p3  p4  p5  p6  p7  p8  p9 p10
+        p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
+        p21 p22))
+; gw
+(def george (segment-painter george-data))
+
 
 (defn draw [picture]
   (picture whole-window))
@@ -172,7 +227,8 @@
     ;; (frame-painter frame1)
     ;; (draw x)
     ;; (draw box)
-    ;; (george frame2)
+    ;; (george whole-window)
+    (draw george)
     ;; (draw (rotate george))
     ;; (draw (flip-horiz george))
     ;; (draw (beside box box))
