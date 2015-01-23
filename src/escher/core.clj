@@ -26,21 +26,21 @@
              :e1 [100 0]
              :e2 [0 200]})
 
-; gw
+
 (defn make-vect [x y]
   [x y])
 
 
-; gw
+
 (defn make-segment [p1 p2]
   [p1 p2])
 
-; gw
+
 (defn add-vec [[x1 y1] [x2 y2]]
   [(+ x1 x2) (+ y1 y2)]
  )
 
-; gw
+
 (defn sub-vec [[x1 y1] [x2 y2]]
   [(- x1 x2) (- y1 y2)]
   )
@@ -105,19 +105,17 @@
       (left frame)
       (right frame))))
 
-; gw
+
 (defn below [p1 p2]
   (rotate (beside (rotate270 p1)
-                  (rotate270 p2)))
-  )
+                  (rotate270 p2))))
 
-; gw
+
 (defn path
-  "Creates a seq of pairs-of-points from a 'bare' list of points. Use to
+  "Creates a seq of line-segments from a 'bare' list of points. Use to
   draw a continuous line through the list of points."
   [& veclist]
-  (partition 2 1 veclist)
-  )
+  (partition 2 1 veclist))
 
 
 (defn quartet [p1 p2 p3 p4]
@@ -200,16 +198,41 @@
 ;;    (([0 0.35] [0.15 0.6]) ([0.15 0.6] [0.3 0.4]))
 
 ; Ex2.49, Make these shapes with segment-painter/path
-(def box )
-(def x)
-(def diamond)
-; gw
-(def george-data
+
+;; By defining segment-lists separately, you can combine figures
+;; by concat'ting their segment-lists--see diamond-x.
+
+(def box-segs
+  (path (make-vect 0 0) (make-vect 0.99 0)
+        (make-vect 0.99 0.99) (make-vect 0 0.99)
+        (make-vect 0 0)))
+(def box
+  (segment-painter box-segs))
+
+(def x-segs
+  (concat (path (make-vect 0 0) (make-vect 1 1))
+          (path (make-vect 1 0) (make-vect 0 1))))
+(def x
+  (segment-painter x-segs))
+
+
+(def diamond-segs
+  (path (make-vect 0.5 0) (make-vect 1 0.5)
+        (make-vect 0.5 1) (make-vect 0 0.5)
+        (make-vect 0.5 0)))
+
+(def diamond
+  (segment-painter diamond-segs))
+
+(def diamond-x
+  (segment-painter (concat diamond-segs x-segs)))
+
+(def george-segs
   (path  p1  p2  p3  p4  p5  p6  p7  p8  p9 p10
         p11 p12 p13 p14 p15 p16 p17 p18 p19 p20
         p21 p22))
-; gw
-(def george (segment-painter george-data))
+
+(def george (segment-painter george-segs))
 
 
 (defn draw [picture]
@@ -236,8 +259,11 @@
     ;; (draw x)
     ;; (draw box)
     ;; (draw george)
-    ;; (draw (rotate george))
-    (draw (beside george (rotate180 george)))
+    ;; (draw (rotate180 george))
+    ;; (draw (beside (flip-horiz george) (flip-vert george)))
+    ;; (draw (beside (flip-horiz george) george))
+    (draw (below (flip-horiz george) george))
+    ;; (draw (beside box x))
     ;; (draw (flip-vert george))
     ;; (draw (beside box box))
     ;; (draw (combine-four george))
