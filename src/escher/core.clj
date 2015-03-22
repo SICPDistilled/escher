@@ -206,6 +206,10 @@
   (below (beside p1 p2)
          (beside p3 p4)))
 
+(defn over [p1 p2]
+  (fn [frame]
+    (p2 frame)
+    (p1 frame)))
 
 
 ;;==================================================================
@@ -520,7 +524,15 @@
       ; COMPLETE
       )))
 
+(def red   [0 100 100])
+(def green [33 100 100])
+(def blue  [66 100 100])
 
+(defn hsbpic
+  [p [h s b]]
+  (fn [frame]
+    (q/with-stroke [h s b]
+      (p frame))))
 
 
 
@@ -530,8 +542,12 @@
   []
   (let [man (image-painter (q/load-image "data/man.gif"))
         bruce (image-painter (q/load-image "data/bruce.jpg"))
-        angels (image-painter (q/load-image "data/angels.jpg"))]
-    (q/background 255)
+        angels (image-painter (q/load-image "data/angels.jpg"))
+        ]
+    (q/stroke-weight 4)
+    (q/color-mode :hsb 100)
+
+    (q/background 0 0 100)
     ;; (frame-painter frame1)
     ;; (draw x)
     ;; (draw box)
@@ -540,8 +556,12 @@
     ;; (draw (flip-horiz george))
     ;; (draw (beside box box))
     ;; (draw (combine-four george))
-    ;; (draw (beside (below george george)
-    ;; (flip-horiz (below george george))))
+    #_(draw (beside (hsvpic (below george george) red)
+                    (hsvpic (flip-horiz (below george george)) blue)))
+
+    (draw (over (hsbpic george red)
+                (hsbpic (rotate george) blue)))
+
     ;; (draw (below (beside george (flip-horiz george))
     ;; (beside george (flip-horiz george))))
 
@@ -549,7 +569,15 @@
     ;;                        flip-horiz rotate)
     ;;       george))
 
-    (draw (square-limit george 3))
+    ;(q/stroke 133 20 50)
+
+    #_(q/with-stroke [200 50 50]
+        (draw (square-limit george 3)))
+
+
+    ;(draw (color-picture (square-limit george 2) 255 0 0))
+
+    ;(println (format "%x" (q/current-stroke)))
 
     ; these pictures need image-painter to be implemented
 
@@ -571,9 +599,14 @@
 ;;
 ;;==================================================================
 
+(defn setup []
+  ; draw will be called 4 times per second
+  ;(q/frame-rate 4)
+  )
+
 (q/defsketch escher
   :title "Escher"
   :draw draw-pictures
   :size [width height])
 
-(defn -main [])
+;(defn -main [])
