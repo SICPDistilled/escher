@@ -1,5 +1,6 @@
 (ns escher.core
-  (require [quil.core :as q])
+  (require [quil.core :as q]
+           [clj-tuple :as tup])
   (:gen-class))
 
 ;;==================================================================
@@ -9,20 +10,17 @@
 ;;==================================================================
 
 (defn make-vec [x y]
-  [x y])
+  (tup/vector x y))
 
 (defn add-vec [[x1 y1] [x2 y2]]
-  [(+ x1 x2) (+ y1 y2)]
- )
+  (tup/vector (+ x1 x2) (+ y1 y2)))
 
 
 (defn sub-vec [[x1 y1] [x2 y2]]
-  [(- x1 x2) (- y1 y2)]
-  )
+  (tup/vector (- x1 x2) (- y1 y2)))
 
 (defn scale-vec [[x y] s]
-  [(* x s) (* y s)]
-  )
+  (tup/vector (* x s) (* y s)))
 
 
 ;;==================================================================
@@ -82,7 +80,7 @@
   "Represent a line segment as a vector of two vectors--e.g.,
   [[0 0] [1 0]] represents a line from [0 0] to [1 0]."
   [vec1 vec2]
-  [vec1 vec2])
+  (tup/vector vec1 vec2))
 
 (defn path
   "Creates a seq of line-segments from a 'bare' list of points. Use to
@@ -146,9 +144,9 @@
   (fn [frame2]
     (let [unit-sq-xform (frame-coord-map frame2)
           new-origin (unit-sq-xform origin)]
-      (p {:origin new-origin
-          :e1 (sub-vec (unit-sq-xform e1) new-origin)
-          :e2 (sub-vec (unit-sq-xform e2) new-origin)}))))
+      (p (tup/hash-map :origin new-origin
+                       :e1 (sub-vec (unit-sq-xform e1) new-origin)
+                       :e2 (sub-vec (unit-sq-xform e2) new-origin))))))
 
 
 
@@ -159,19 +157,19 @@
 ;;==================================================================
 
 (defn flip-vert [p]
-  (transform-picture p [0 1] [1 1] [0 0]))
+  (transform-picture p (tup/vector 0 1) (tup/vector 1 1) (tup/vector 0 0)))
 
 (defn flip-horiz [p]
-  (transform-picture p [1 0] [0 0] [1 1]))
+  (transform-picture p (tup/vector 1 0) (tup/vector 0 0) (tup/vector 1 1)))
 
 (defn rotate [p]
-  (transform-picture p [1 0] [1 1] [0 0]))
+  (transform-picture p (tup/vector 1 0) (tup/vector 1 1) (tup/vector 0 0)))
 
 (defn rotate180 [p]
   (rotate (rotate p)))
 
 (defn rotate270 [p]
-  (transform-picture p [0 1] [0 0] [1 1]))
+  (transform-picture p (tup/vector 0 1) (tup/vector 0 0) (tup/vector 1 1)))
 
 
 
@@ -185,9 +183,9 @@
   "Returns a picture that, splitting its frame in half vertically, draws
   p1 in the left half and p2 in the right half."
   [p1 p2]
-  (let [split [0.5 0]
-        left (transform-picture p1 [0 0] split [0 1])
-        right (transform-picture p2 split [1 0] [0.5 1])]
+  (let [split (tup/vector 0.5 0)
+        left (transform-picture p1 (tup/vector 0 0) split (tup/vector 0 1))
+        right (transform-picture p2 split (tup/vector 1 0) (tup/vector 0.5 1))]
     (fn [frame]
       (left frame)
       (right frame))))
@@ -320,17 +318,17 @@
 ;; origin, e1, and e2 (all 2-D vectors) define a frame.
 ;; Think of origin as a point, e1 as the x-axis, e2 as the y-axis.
 
-(def whole-window {:origin [0 0]
-                   :e1 [width 0]
-                   :e2 [0 height]})
+(def whole-window {:origin (tup/vector 0 0)
+                   :e1 (tup/vector width 0)
+                   :e2 (tup/vector 0 height)})
 
-(def frame1 {:origin [200 50]
-             :e1 [200 100]
-             :e2 [150 200]})
+(def frame1 {:origin (tup/vector 200 50)
+             :e1 (tup/vector 200 100)
+             :e2 (tup/vector 150 200)})
 
-(def frame2 {:origin [50 50]
-             :e1 [100 0]
-             :e2 [0 200]})
+(def frame2 {:origin (tup/vector 50 50)
+             :e1 (tup/vector 100 0)
+             :e2 (tup/vector 0 200)})
 
 (defn draw
   "Draws picture, using the entire Quil window."
@@ -524,9 +522,9 @@
       ; COMPLETE
       )))
 
-(def red   [0 100 100])
-(def green [33 100 100])
-(def blue  [66 100 100])
+(def red   (tup/vector 0 100 100))
+(def green (tup/vector 33 100 100))
+(def blue  (tup/vector 66 100 100))
 
 (defn hsbpic
   [p [h s b]]
@@ -544,10 +542,10 @@
         bruce (image-painter (q/load-image "data/bruce.jpg"))
         angels (image-painter (q/load-image "data/angels.jpg"))
         ]
-    (q/stroke-weight 4)
-    (q/color-mode :hsb 100)
+    #_(q/stroke-weight 4)
+    #_(q/color-mode :hsb 100)
 
-    (q/background 0 0 100)
+    #_(q/background 0 0 100)
     ;; (frame-painter frame1)
     ;; (draw x)
     ;; (draw box)
@@ -559,7 +557,7 @@
     #_(draw (beside (hsvpic (below george george) red)
                     (hsvpic (flip-horiz (below george george)) blue)))
 
-    (draw (over (hsbpic george red)
+   #_(draw (over (hsbpic george red)
                 (hsbpic (rotate george) blue)))
 
     ;; (draw (below (beside george (flip-horiz george))
@@ -574,6 +572,7 @@
     #_(q/with-stroke [200 50 50]
         (draw (square-limit george 3)))
 
+    (draw (square-limit george 3))
 
     ;(draw (color-picture (square-limit george 2) 255 0 0))
 
@@ -609,4 +608,4 @@
   :draw draw-pictures
   :size [width height])
 
-;(defn -main [])
+(defn -main [])
