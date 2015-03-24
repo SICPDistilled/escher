@@ -33,9 +33,6 @@
 (defn make-vec [x y]
   (tup/vector x y))
 
-(defn make-segment [vec1 vec2]
-  [vec1 vec2])
-
 (defn add-vec [[x1 y1] [x2 y2]]
   (tup/vector (+ x1 x2) (+ y1 y2)))
 
@@ -45,6 +42,21 @@
 
 (defn scale-vec [[x y] s]
   (tup/vector (* x s) (* y s)))
+
+
+;;==================================================================
+;;
+;;  What is a frame?
+;;
+;;  A frame represents a transformation from one coordinate system
+;;  to another. The transformation described by:
+;;
+;;     {:origin [n1 n2], :e1 [n3 n4], :e2 [n5 n6]}
+;;
+;;  can express combinations of translation, scaling, shearing,
+;;  and reflection.
+;;
+;;==================================================================
 
 
 (defn frame-coord-map
@@ -111,18 +123,7 @@
 ;;
 ;;==================================================================
 
-(defn segment-painter
-  "Returns a picture that draws the given list of line segments.
-  Must execute within a Quil sketch."
-    [segment-list]
-  ; xform-pt is a function that maps a point to the given frame
-  (fn [frame]
-    (let [xform-pt (frame-coord-map frame)]
-      (doseq [[start end] segment-list]
-        (draw-line (xform-pt start) (xform-pt end))))))
 
-
->>>>>>> color-anim
 (defn frame-painter [{:keys [origin e1 e2]}]
   "Draws parallelogram 'frame' based on origin and vectors e1 and e2.
   Must execute within a Quil sketch."
@@ -133,13 +134,14 @@
     (draw-line (add-vec origin e1) corner)))
 
 (defn segment-painter
-  "Returns a function that, when given a frame as its argument, draws
-  the list of line segments in that frame."
-  [segment-list]
+  "Returns a picture that draws the given list of line segments.
+  Must execute within a Quil sketch."
+    [segment-list]
+  ; xform-pt is a function that maps a point to the given frame
   (fn [frame]
-    (let [m (frame-coord-map frame)]
+    (let [xform-pt (frame-coord-map frame)]
       (doseq [[start end] segment-list]
-        (draw-line (m start) (m end))))))
+        (draw-line (xform-pt start) (xform-pt end))))))
 
 (defn transform-picture
   "Transforms a picture by into a different picture, based on new vectors
@@ -313,7 +315,6 @@
 (def frame2 {:origin (tup/vector 50 50)
              :e1 (tup/vector 100 0)
              :e2 (tup/vector 0 200)})
->>>>>>> color-anim
 
 ;; making George drawing
 
@@ -463,7 +464,7 @@
     #_(draw (beside (hsvpic (below george george) red)
                     (hsvpic (flip-horiz (below george george)) blue)))
 
-   #_(draw (over (hsbpic george red)
+    #_(draw (over (hsbpic george red)
                 (hsbpic (rotate george) blue)))
 
     ;; (draw (below (beside george (flip-horiz george))
