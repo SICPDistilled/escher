@@ -15,12 +15,12 @@
 (defn add-vec [[x1 y1] [x2 y2]]
   (t/vector (+ x1 x2) (+ y1 y2)))
 
-
 (defn sub-vec [[x1 y1] [x2 y2]]
   (t/vector (- x1 x2) (- y1 y2)))
 
 (defn scale-vec [[x y] s]
   (t/vector (* x s) (* y s)))
+
 
 
 ;;==================================================================
@@ -38,6 +38,7 @@
 ;;==================================================================
 
 
+
 (defn frame-coord-map
   "Returns function that maps [x y] relative to the frame
   defined by origin (a vector to be interpreted as the point
@@ -51,6 +52,7 @@
     (add-vec origin
              (add-vec (scale-vec e1 x)
                       (scale-vec e2 y)))))
+
 
 
 ;;==================================================================
@@ -82,17 +84,19 @@
   [vec1 vec2]
   (t/vector vec1 vec2))
 
+
 (defn path
   "Creates a seq of line-segments from a 'bare' list of points. Use to
   draw a continuous line through the list of points--e.g.,
 
-      (path [[0 1] [0 0] [1 0]])
+  (path [[0 1] [0 0] [1 0]])
 
   returns two line segments connecting the three points in sequence:
 
-      [ [[0 1] [0 0]] [[0 0] [1 0]] ]"
+  [ [[0 1] [0 0]] [[0 0] [1 0]] ]"
   [& veclist]
-  (partition 2 1 veclist))
+  ; COMPLETE
+  )
 
 (def draw-line q/line)
 
@@ -122,7 +126,7 @@
 (defn segment-painter
   "Returns a picture that draws the given list of line segments.
   Must execute within a Quil sketch."
-    [segment-list]
+  [segment-list]
   ; xform-pt is a function that maps a point to the given frame
   (fn [frame]
     (let [xform-pt (frame-coord-map frame)]
@@ -139,13 +143,13 @@
   usually within the range [0 1]--i.e.,a unit square with
   origin [0 0]. Coordinates > 1 will draw outside the drawing
   frame."
-  [p origin e1 e2]
+  [p origin e1 e]
   (fn [frame2]
-    (let [unit-sq-xform (frame-coord-map frame2)
+    (let [unit-sq-xform (frame-coord-map frame)
           new-origin (unit-sq-xform origin)]
       (p (t/hash-map :origin new-origin
-                       :e1 (sub-vec (unit-sq-xform e1) new-origin)
-                       :e2 (sub-vec (unit-sq-xform e2) new-origin))))))
+                     :e1 (sub-vec (unit-sq-xform e1) new-origin)
+                     :e2 (sub-vec (unit-sq-xform e2) new-origin))))))
 
 
 
@@ -159,16 +163,18 @@
   (transform-picture p (t/vector 0 1) (t/vector 1 1) (t/vector 0 0)))
 
 (defn flip-horiz [p]
-  (transform-picture p (t/vector 1 0) (t/vector 0 0) (t/vector 1 1)))
+  ;; COMPLETE (Ex 2.50)
+  )
 
 (defn rotate [p]
-  (transform-picture p (t/vector 1 0) (t/vector 1 1) (t/vector 0 0)))
+  ;; COMPLETE
+  )
 
 (defn rotate180 [p]
   (rotate (rotate p)))
 
 (defn rotate270 [p]
-  (transform-picture p (t/vector 0 1) (t/vector 0 0) (t/vector 1 1)))
+  (rotate (rotate (rotate p))))
 
 
 
@@ -193,8 +199,8 @@
   "Returns a picture that, splitting its frame in half horizintally,
   draws p1 in the top half and p2 in the bottom half."
   [p1 p2]
-  (rotate (beside (rotate270 p1)
-                  (rotate270 p2))))
+  ; COMPLETE (Ex 2.51)
+  )
 
 (defn quartet
   "Returns a picture that subdivides its frame into quarters and
@@ -203,25 +209,26 @@
   (below (beside p1 p2)
          (beside p3 p4)))
 
-(defn over [p1 p2]
-  (fn [frame]
-    (p2 frame)
-    (p1 frame)))
 
 
 ;;==================================================================
 ;;
-;;  building-blocks for "goal" function, square-limit
+;;  building-blocks for the "goal" function, square-limit
 ;;
 ;;==================================================================
 
-#_(defn right-split [p n]
+(defn right-split [p n]
   (if (= n 0)
     p
     (let [smaller (right-split p (dec n))]
       (beside p (below smaller smaller)))))
 
-#_(defn up-split [p n]
+(defn up-split
+  "Returns a picture based on picture p and level-of-recursion n.
+  Draws p in the top half of the frame. Draws two copies of
+  (right-split p (- n 1)), one to the right of the other, in the
+  bottom half of the frame. If n=0, draws p in the current frame."
+  [p n]
   ;; COMPLETE (Ex 2.44)
   )
 
@@ -231,29 +238,17 @@
   and left-split to be defined without duplicated code. (Hint:
   define each function independently, then analyze the resulting
   code to enable each function's redefinition in terms of the
-  two picture transformations f and g.)"
-  (fn self-fn [p n]
-    (if (= n 0)
-      p
-      (let [smaller (self-fn p (dec n))]
-        (f p (g smaller smaller))))))
+  two picture transformations f and g.)
 
-(def right-split
-  "Returns a picture based on picture p and level-of-recursion n.
-  Draws p in the left half of the frame. Draws two copies of
-  (right-split p (- n 1)), stacked vertically, in the right half
-  of the frame. If n=0, draws p in the given frame."
-  (split beside below))
-
-(def up-split
-    "Returns a picture based on picture p and level-of-recursion n.
-  Draws p in the top half of the frame. Draws two copies of
-  (right-split p (- n 1)), one to the right of the other, in the
-  bottom half of the frame. If n=0, draws p in the current frame."
-  (split below beside))
+  Should be able to do
+    (def right-split (split beside below))
+    (def up-split (split below beside)
+  and replace the existing *-split fns"
+  ; COMPLETE (Ex 2.45)
+  )
 
 (defn corner-split
-    "Returns a picture based on picture p and level-of-recursion n.
+  "Returns a picture based on picture p and level-of-recursion n.
   Draws p in the upper-left quarter of frame. Draws two copies
   of (right-split p (- n 1)) in upper-right quarter of frame.
   Draws two copies of (top-split p (- n 1)) in the bottom-left
@@ -282,10 +277,10 @@
       (below top
              bottom))))
 
-(def combine-four (square-of-four rotate180
-                                  flip-vert
-                                  flip-horiz
-                                  identity))
+(def combine-four (square-of-four flip-horiz
+                                  identity
+                                  rotate180
+                                  flip-vert))
 
 (defn square-limit
   "Returns a picture that has a 2 x 2 block of p in the center, encircled
@@ -314,6 +309,7 @@
 (def width 600)
 (def height 600)
 
+
 ;; origin, e1, and e2 (all 2-D vectors) define a frame.
 ;; Think of origin as a point, e1 as the x-axis, e2 as the y-axis.
 
@@ -328,6 +324,7 @@
 (def frame2 {:origin (t/vector 50 50)
              :e1 (t/vector 100 0)
              :e2 (t/vector 0 200)})
+
 
 (defn draw
   "Draws picture, using the entire Quil window."
@@ -347,41 +344,14 @@
 
 ;;==================================================================
 ;;
-;;  arrow: a picture that draws an arrow pointing toward the
-;;  top of the screen
-;;
-;;==================================================================
-
-(def length-delta 0.1)
-(def arrow-dx 0.1)
-(def arrow-dy 0.3)
-
-(def a1 (make-vec 0.5 (- 1 length-delta)))
-(def a2 (make-vec 0.5 length-delta))
-(def shaft-segs   (path a1 a2))
-
-(def a3 (make-vec (- 0.5 arrow-dx) (+ arrow-dy length-delta)))
-(def a4 (make-vec (+ 0.5 arrow-dx) (+ arrow-dy length-delta)))
-(def head-segs   (path a3 a2 a4))
-
-(def arrow (segment-painter (concat shaft-segs head-segs)))
-
-
-
-;;==================================================================
-;;
 ;;  box: a picture that draws a square
 ;;
 ;;==================================================================
 
 
-(def box-segs
-  (path (make-vec 0 0) (make-vec 1 0)
-        (make-vec 1 1) (make-vec 0 1)
-        (make-vec 0 0)))
-
 (def box
-  (segment-painter box-segs))
+  ; COMPLETE
+  )
 
 
 
@@ -391,45 +361,22 @@
 ;;
 ;;==================================================================
 
-(def x-segs
-  (concat (path (make-vec 0 0) (make-vec 1 1))
-          (path (make-vec 1 0) (make-vec 0 1))))
-
 (def x
-  (segment-painter x-segs))
+  ; COMPLETE
+  )
 
 
 
 ;;==================================================================
 ;;
-;;  diamond: a picture that draws a square for which one diagonal
-;;  is horizontal and the other is vertical
+;;  diamond: a picture that draws a square with vertices at each
+;;  midpoint of the left, top, right, and bottom faces of the frame
 ;;
 ;;==================================================================
-
-(def diamond-segs
-  (path (make-vec 0.5 0) (make-vec 1 0.5)
-        (make-vec 0.5 1) (make-vec 0 0.5)
-        (make-vec 0.5 0)))
 
 (def diamond
-  (segment-painter diamond-segs))
-
-
-
-;;==================================================================
-;;
-;;  diamond-x: a picture that draws both 'x' and 'diamond' (in
-;;  the same frame)
-;;
-;;==================================================================
-
-;; Note that you can use (concat path1 path2 ... pathN)
-;; to combine multiple non-connected paths into a single
-;; sequence of line segments (for use with segment-painter).
-
-(def diamond-x
-  (segment-painter (concat diamond-segs x-segs)))
+  ; COMPLETE
+  )
 
 
 
@@ -462,18 +409,6 @@
 (def p21 (make-vec 0.15 0.4))
 (def p22 (make-vec 0.0 0.15))
 
-;; draws a small square in the upper left corner
-;(def p23 (make-vec 0.0 0.0))
-;(def p24 (make-vec 0.03 0.0))
-;(def p25 (make-vec 0.03 0.03))
-;(def p26 (make-vec 0.0 0.03))
-
-;; draws a slightly larger square in the lower right corner
-;(def p27 (make-vec 1 1))
-;(def p28 (make-vec 0.94 1))
-;(def p29 (make-vec 0.94 0.94))
-;(def p30 (make-vec 1 0.94))
-
 (def george-segs
   (concat
    (path p1  p2  p3  p4  p5)
@@ -481,16 +416,16 @@
    (path p9 p10 p11)
    (path p12 p13 p14 p15 p16)
    (path p17 p18 p19 p20 p21 p22)
+   ))
 
-;   (path p23 p24 p25 p26 p23) ; dot for origin
-;   (path p27 p28 p29 p30 p27) ; larger dot for opposite corner
-      ))
-
-(def george (segment-painter george-segs))
+(def george
+  ; COMPLETE
+  )
 
 
-; unused by other code, as far as I can tell
-(def diag (segment-painter [[[0 0] [1 1]]]))
+
+
+(def diag (segment-painter [[(t/vector 0 0) (t/vector 1 1)]]))
 
 
 
@@ -521,30 +456,13 @@
       ; COMPLETE
       )))
 
-(def red   (t/vector 0 100 100))
-(def green (t/vector 33 100 100))
-(def blue  (t/vector 66 100 100))
-
-(defn hsbpic
-  [p [h s b]]
-  (fn [frame]
-    (q/with-stroke [h s b]
-      (p frame))))
 
 
-
-(defn draw-pictures
-  "'Container' for executing drawing(s) within a Quil sketch.
-  Experiment by uncommenting one or more lines, or add your own."
-  []
+(defn draw-image []
   (let [man (image-painter (q/load-image "data/man.gif"))
         bruce (image-painter (q/load-image "data/bruce.jpg"))
-        angels (image-painter (q/load-image "data/angels.jpg"))
-        ]
-    #_(q/stroke-weight 4)
-    #_(q/color-mode :hsb 100)
-
-    #_(q/background 0 0 100)
+        angels (image-painter (q/load-image "data/angels.jpg"))]
+    (q/background 255)
     ;; (frame-painter frame1)
     ;; (draw x)
     ;; (draw box)
@@ -553,39 +471,23 @@
     ;; (draw (flip-horiz george))
     ;; (draw (beside box box))
     ;; (draw (combine-four george))
-    #_(draw (beside (hsvpic (below george george) red)
-                    (hsvpic (flip-horiz (below george george)) blue)))
-
-   #_(draw (over (hsbpic george red)
-                (hsbpic (rotate george) blue)))
-
+    ;; (draw (beside (below george george)
+    ;;               (flip-horiz (below george george))))
     ;; (draw (below (beside george (flip-horiz george))
-    ;; (beside george (flip-horiz george))))
+    ;;              (beside george (flip-horiz george))))
 
     ;; (draw ((square-of-four identity flip-vert
     ;;                        flip-horiz rotate)
-    ;;       george))
+    ;;        george))
 
-    ;(q/stroke 133 20 50)
-
-    #_(q/with-stroke [200 50 50]
-        (draw (square-limit george 3)))
-
-    (draw (square-limit george 3))
-
-    ;(draw (color-picture (square-limit george 2) 255 0 0))
-
-    ;(println (format "%x" (q/current-stroke)))
-
-    ; these pictures need image-painter to be implemented
-
+    ; Needs image-painter
     ;; (bruce frame1)
     ;; (bruce frame2)
     ;; (draw (beside george bruce))
     ;; (draw (corner-split bruce 4))
     ;; (draw (square-limit bruce 3))
-    ;; (draw (beside bruce (below bruce
-    ;; george)))
+    ;; (draw (beside  bruce (below  bruce
+    ;;                              george)))
     ))
 
 
@@ -597,14 +499,9 @@
 ;;
 ;;==================================================================
 
-(defn setup []
-  ; draw will be called 4 times per second
-  ;(q/frame-rate 4)
-  )
-
 (q/defsketch escher
   :title "Escher"
-  :draw draw-pictures
+  :draw draw-image
   :size [width height])
 
 (defn -main [])
