@@ -105,16 +105,6 @@
 ;;
 ;;==================================================================
 
-(defn segment-painter
-  "Returns a picture that draws the given list of line segments.
-  Must execute within a Quil sketch."
-    [segment-list]
-  ; xform-pt is a function that maps a point to the given frame
-  (fn [frame]
-    (let [xform-pt (frame-coord-map frame)]
-      (doseq [[start end] segment-list]
-        (draw-line (xform-pt start) (xform-pt end))))))
-
 
 (defn frame-painter [{:keys [origin e1 e2]}]
   "Draws a parallelogram 'frame' based on origin and
@@ -129,6 +119,15 @@
     (draw-line (add-vec origin e2) corner)
     (draw-line (add-vec origin e1) corner)))
 
+(defn segment-painter
+  "Returns a picture that draws the given list of line segments.
+  Must execute within a Quil sketch."
+    [segment-list]
+  ; xform-pt is a function that maps a point to the given frame
+  (fn [frame]
+    (let [xform-pt (frame-coord-map frame)]
+      (doseq [[start end] segment-list]
+        (draw-line (xform-pt start) (xform-pt end))))))
 
 (defn transform-picture
   "Returns a transformed picture based on the values of origin,
