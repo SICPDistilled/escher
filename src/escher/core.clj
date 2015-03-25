@@ -13,13 +13,13 @@
   (t/vector x y))
 
 (defn add-vec [[x1 y1] [x2 y2]]
-  (t/vector (+ x1 x2) (+ y1 y2)))
+  (make-vec (+ x1 x2) (+ y1 y2)))
 
 (defn sub-vec [[x1 y1] [x2 y2]]
-  (t/vector (- x1 x2) (- y1 y2)))
+  (make-vec (- x1 x2) (- y1 y2)))
 
 (defn scale-vec [[x y] s]
-  (t/vector (* x s) (* y s)))
+  (make-vec (* x s) (* y s)))
 
 
 
@@ -82,7 +82,7 @@
   "Represent a line segment as a vector of two vectors--e.g.,
   [[0 0] [1 0]] represents a line from [0 0] to [1 0]."
   [vec1 vec2]
-  (t/vector vec1 vec2))
+  (make-vec vec1 vec2))
 
 
 (defn path
@@ -143,13 +143,13 @@
   usually within the range [0 1]--i.e.,a unit square with
   origin [0 0]. Coordinates > 1 will draw outside the drawing
   frame."
-  [p origin e1 e]
-  (fn [frame2]
+  [p origin e1 e2]
+  (fn [frame]
     (let [unit-sq-xform (frame-coord-map frame)
           new-origin (unit-sq-xform origin)]
-      (p (t/hash-map :origin new-origin
-                     :e1 (sub-vec (unit-sq-xform e1) new-origin)
-                     :e2 (sub-vec (unit-sq-xform e2) new-origin))))))
+      (p ({:origin new-origin
+           :e1 (sub-vec (unit-sq-xform e1) new-origin)
+           :e2 (sub-vec (unit-sq-xform e2) new-origin)})))))
 
 
 
@@ -160,7 +160,7 @@
 ;;==================================================================
 
 (defn flip-vert [p]
-  (transform-picture p (t/vector 0 1) (t/vector 1 1) (t/vector 0 0)))
+  (transform-picture p (make-vec 0 1) (make-vec 1 1) (make-vec 0 0)))
 
 (defn flip-horiz [p]
   ;; COMPLETE (Ex 2.50)
@@ -188,9 +188,9 @@
   "Returns a picture that, splitting its frame in half vertically, draws
   p1 in the left half and p2 in the right half."
   [p1 p2]
-  (let [split (t/vector 0.5 0)
-        left (transform-picture p1 (t/vector 0 0) split (t/vector 0 1))
-        right (transform-picture p2 split (t/vector 1 0) (t/vector 0.5 1))]
+  (let [split (make-vec 0.5 0)
+        left (transform-picture p1 (make-vec 0 0) split (make-vec 0 1))
+        right (transform-picture p2 split (make-vec 1 0) (make-vec 0.5 1))]
     (fn [frame]
       (left frame)
       (right frame))))
@@ -313,17 +313,17 @@
 ;; origin, e1, and e2 (all 2-D vectors) define a frame.
 ;; Think of origin as a point, e1 as the x-axis, e2 as the y-axis.
 
-(def whole-window {:origin (t/vector 0 0)
-                   :e1 (t/vector width 0)
-                   :e2 (t/vector 0 height)})
+(def whole-window {:origin (make-vec 0 0)
+                   :e1 (make-vec width 0)
+                   :e2 (make-vec 0 height)})
 
-(def frame1 {:origin (t/vector 200 50)
-             :e1 (t/vector 200 100)
-             :e2 (t/vector 150 200)})
+(def frame1 {:origin (make-vec 200 50)
+             :e1 (make-vec 200 100)
+             :e2 (make-vec 150 200)})
 
-(def frame2 {:origin (t/vector 50 50)
-             :e1 (t/vector 100 0)
-             :e2 (t/vector 0 200)})
+(def frame2 {:origin (make-vec 50 50)
+             :e1 (make-vec 100 0)
+             :e2 (make-vec 0 200)})
 
 
 (defn draw
@@ -425,7 +425,7 @@
 
 
 
-(def diag (segment-painter [[(t/vector 0 0) (t/vector 1 1)]]))
+(def diag (segment-painter [[(make-vec 0 0) (make-vec 1 1)]]))
 
 
 
