@@ -541,10 +541,10 @@
         bruce (image-painter (q/load-image "data/bruce.jpg"))
         angels (image-painter (q/load-image "data/angels.jpg"))
         ]
-    #_(q/stroke-weight 4)
-    #_(q/color-mode :hsb 100)
+    (q/stroke-weight 4)
+    (q/color-mode :hsb 100)
 
-    #_(q/background 0 0 100)
+    (q/background 0 0 100)
     ;; (frame-painter frame1)
     ;; (draw x)
     ;; (draw box)
@@ -553,8 +553,8 @@
     ;; (draw (flip-horiz george))
     ;; (draw (beside box box))
     ;; (draw (combine-four george))
-    #_(draw (beside (hsvpic (below george george) red)
-                    (hsvpic (flip-horiz (below george george)) blue)))
+    (draw (beside (hsbpic (below george george) red)
+                    (hsbpic (flip-horiz (below george george)) blue)))
 
    #_(draw (over (hsbpic george red)
                 (hsbpic (rotate george) blue)))
@@ -571,7 +571,7 @@
     #_(q/with-stroke [200 50 50]
         (draw (square-limit george 3)))
 
-    (draw (square-limit george 3))
+    #_(draw (square-limit george 3))
 
     ;(draw (color-picture (square-limit george 2) 255 0 0))
 
@@ -607,4 +607,4 @@
   :draw draw-pictures
   :size [width height])
 
-(defn -main [])
+;;(defn -main [])
