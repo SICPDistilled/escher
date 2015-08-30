@@ -18,12 +18,12 @@ Look over the [slides](http://www.sicpdistilled.com/slides/2.2.4/#1) (Video and 
 
 Check by drawing them either with `(draw <picture>)` or `(<picture> <frame>)`
 
-* Complete `flip-horiz`, `rotate`, `below`
+* Complete `flip-horiz`, `rotate`, `above`
 
 Check again that they each work and can be combined by (for instance)
 
 ```clojure
-(draw (below (beside george (flip-horiz george))
+(draw (above (beside george (flip-horiz george))
              (beside (rotate george) (flip-vert george))))
 ```
 
