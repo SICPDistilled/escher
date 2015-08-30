@@ -84,7 +84,7 @@
       (left frame)
       (right frame))))
 
-(defn below [p1 p2]
+(defn above [p1 p2]
   ; COMPLETE (Ex 2.51)
   )
 
@@ -94,7 +94,7 @@
 
 
 (defn quartet [p1 p2 p3 p4]
-  (below (beside p1 p2)
+  (above (beside p1 p2)
          (beside p3 p4)))
 
 (defn square-of-four [tl tr
@@ -102,14 +102,14 @@
   (fn [p]
     (let [top (beside (tl p) (tr p))
           bottom (beside (bl p) (br p))]
-      (below top
+      (above top
              bottom))))
 
 (defn right-split [p n]
   (if (= n 0)
     p
     (let [smaller (right-split p (dec n))]
-      (beside p (below smaller smaller)))))
+      (beside p (above smaller smaller)))))
 
 (defn up-split [p n]
   ;; COMPLETE (Ex 2.44)
@@ -119,8 +119,8 @@
 (defn split [f g]
   ; COMPLETE (Ex 2.45)
   "Should be able to do
-    (def right-split (split beside below))
-    (def up-split (split below beside)
+    (def right-split (split beside above))
+    (def up-split (split above beside)
   and replace the existing *-split fns"
   )
 
@@ -130,10 +130,10 @@
     (let [up (up-split p (dec n))
           right (right-split p (dec n))
           top-left (beside up up)
-          bottom-right (below right right)
-          corner (corner-split p (dec n))]
-      (beside (below p top-left)
-              (below bottom-right corner)))))
+          bottom-right (above right right)
+          top-right (corner-split p (dec n))]
+      (beside (above top-left p)
+              (above top-right bottom-right)))))
 
 (def combine-four (square-of-four flip-horiz
                                   identity
@@ -177,9 +177,9 @@
     ;; (draw (flip-horiz george))
     ;; (draw (beside box box))
     ;; (draw (combine-four george))
-    ;; (draw (beside (below george george)
-    ;;               (flip-horiz (below george george))))
-    ;; (draw (below (beside george (flip-horiz george))
+    ;; (draw (beside (above george george)
+    ;;               (flip-horiz (above george george))))
+    ;; (draw (above (beside george (flip-horiz george))
     ;;              (beside george (flip-horiz george))))
 
     ;; (draw ((square-of-four identity flip-vert
@@ -192,7 +192,7 @@
     ;; (draw (beside george bruce))
     ;; (draw (corner-split bruce 4))
     ;; (draw (square-limit bruce 3))
-    ;; (draw (beside  bruce (below  bruce
+    ;; (draw (beside  bruce (above  bruce
     ;;                              george)))
     ))
 
